@@ -1,0 +1,39 @@
+version: 0.2
+
+phases:
+  install:
+    runtime-versions:
+        docker: 18
+  pre_build:
+    commands:
+      - echo Install started on `date`
+      - pip install --upgrade awscli==1.18.17
+      - echo $(aws sts get-caller-identity) > account_info.json
+      #リポジトリURI用にアカウントID取得
+      - ACCOUNT_ID=$(jq ".Account" account_info.json | sed "s/\"//g")
+      - $(aws ecr get-login --no-include-email --region $AWS_DEFAULT_REGION)
+      #タグ付用にcommitのhash値取得
+      - COMMIT_HASH=$(echo $CODEBUILD_RESOLVED_SOURCE_VERSION | cut -c 1-7)
+      #rereadファイル用
+      - cp -r $CODEBUILD_SRC_DIR_REREAD_SOURCE ./docker/base/
+      #envファイル
+      - cp $CODEBUILD_SRC_DIR_S3_ENV/reread-env-prod ./env-source
+      - cp ./env-source/,env.prod ./docker/base/reread/.env
+
+  build:
+    commands:
+      - echo Build started on `date`
+      - docker build -t base_image ./docker/base
+      - docker build -t $ACCOUNT_ID.dkr.ecr.$AWS_DEFAULT_REGION.amazonaws.com/reread-php-fpm:$COMMIT_HASH ./docker/php
+      - docker build -t $ACCOUNT_ID.dkr.ecr.$AWS_DEFAULT_REGION.amazonaws.com/reread-nginx:$COMMIT_HASH ./docker/web
+
+  post_build:
+    commands:
+      - echo Build completed on `date`
+      - docker push $ACCOUNT_ID.dkr.ecr.$AWS_DEFAULT_REGION.amazonaws.com/reread-php-fpm:$COMMIT_HASH
+      - docker push $ACCOUNT_ID.dkr.ecr.$AWS_DEFAULT_REGION.amazonaws.com/reread-nginx:$COMMIT_HASH
+      - IMAGE_TAG="{\"Parameters\":{\"ImageTag\":\"${COMMIT_HASH}\"}}"
+      - echo "${IMAGE_TAG}" > imagetag.json
+      - cat imagetag.json
+artifacts:
+    files: imagetag.json

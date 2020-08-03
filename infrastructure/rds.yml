@@ -1,0 +1,71 @@
+AWSTemplateFormatVersion: 2010-09-09
+
+Description: Create RDS "
+#RDSの設定
+Parameters:
+  EnvironmentName:
+    Description: An environment name that will be prefixed to resource names
+    Type: String
+
+  DBAllocatedStorage:
+    Default: '20'
+    Description: "The size of the database (Gb)"
+    Type: Number
+    ConstraintDescription: "Must be 20 Gb."
+
+  DBInstanceClass:
+    Default: db.t3.micro
+    Description: "The database instance type"
+    Type: String
+    ConstraintDescription: "Must select a valid database instance type."
+
+  DBInstanceMasterPassword:
+    NoEcho: true
+    Description: The database admin account password
+    Type: String
+
+  PrivateSubnet1:
+    Description: "PrivateSubnet1"
+    Type: AWS::EC2::Subnet::Id
+  PrivateSubnet2:
+    Description: "PrivateSubnet2"
+    Type: AWS::EC2::Subnet::Id
+
+  DBSecurityGroup:
+    Description: "DBSecurityGroup"
+    Type: AWS::EC2::SecurityGroup::Id
+
+Resources:
+  DBSubnetGroup:
+    Type: 'AWS::RDS::DBSubnetGroup'
+    Properties:
+      DBSubnetGroupDescription: DB Subnet Group
+      SubnetIds:
+        - !Ref PrivateSubnet1
+        - !Ref PrivateSubnet2
+
+  DBInstance:
+    Type: 'AWS::RDS::DBInstance'
+    Properties:
+      AllocatedStorage: !Ref DBAllocatedStorage
+      DBInstanceClass: !Ref DBInstanceClass
+      DeletionProtection: true
+      Engine: MySQL
+      DBName: reread
+      DBParameterGroupName: charset-utf-8-mysql
+      MasterUsername: root
+      MasterUserPassword: !Ref DBInstanceMasterPassword
+      StorageType: standard
+      MultiAZ: 'false'
+      DBSubnetGroupName: !Ref DBSubnetGroup
+      VPCSecurityGroups:
+        - !Ref DBSecurityGroup
+      Tags:
+        - Key: Name
+          Value: !Sub ${EnvironmentName}-DB
+
+Outputs:
+
+  RDSAddress:
+    Description: The hostname for the RDS instance
+    Value: !GetAtt DBInstance.Endpoint.Address
