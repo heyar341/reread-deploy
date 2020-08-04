@@ -15,7 +15,7 @@ phases:
       #タグ付用にcommitのhash値取得
       - COMMIT_HASH=$(echo $CODEBUILD_RESOLVED_SOURCE_VERSION | cut -c 1-7)
       #rereadファイル用
-      - cp -r $CODEBUILD_SRC_DIR_REREAD_SOURCE ./docker/base/
+      - cp -r $CODEBUILD_SRC_DIR_REREAD_SOURCE ./docker/base/reread
       #envファイル
       - cp -r $CODEBUILD_SRC_DIR_S3_ENV ./env-source
       - cp ./env-source/.env ./docker/base/reread/.env
