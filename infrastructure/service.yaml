@@ -31,6 +31,9 @@ Parameters:
   TargetGroup:
     Type: String  
 
+  DBEndpoint:
+    Type: String
+
 Resources:
   Service:
     Type: AWS::ECS::Service
@@ -69,6 +72,9 @@ Resources:
               awslogs-region: !Ref AWS::Region
 
         - Name: php-fpm
+          Environment:
+            - Name: DB_HOST
+              Value: !Ref DBEndpoint
           Essential: true
           Image: !Sub ${AWS::AccountId}.dkr.ecr.${AWS::Region}.amazonaws.com/reread-php-fpm:${ImageTag}
           Memory: 300
