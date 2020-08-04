@@ -17,7 +17,7 @@ phases:
       #rereadファイル用
       - cp -r $CODEBUILD_SRC_DIR_REREAD_SOURCE ./docker/base/
       #envファイル
-      - cp $CODEBUILD_SRC_DIR_S3_ENV ./env-source
+      - cp -r $CODEBUILD_SRC_DIR_S3_ENV ./env-source
       - cp ./env-source/.env ./docker/base/reread/.env
 
   build:
