@@ -56,7 +56,7 @@ Resources:
       MasterUsername: root
       MasterUserPassword: !Ref DBInstanceMasterPassword
       StorageType: standard
-      MultiAZ: 'false'
+      MultiAZ: false
       DBSubnetGroupName: !Ref DBSubnetGroup
       VPCSecurityGroups:
         - !Ref DBSecurityGroup
