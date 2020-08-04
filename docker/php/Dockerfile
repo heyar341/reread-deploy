@@ -35,6 +35,7 @@ ENV LANG ja_JP.utf8
 
 COPY --from=base /var/www/html/reread /var/www/html/reread
 COPY ./www.conf /etc/php-fpm.d/www.conf
+COPY ./php.ini /usr/local/etc/php/php.ini
 
 WORKDIR /var/www/html/reread
 #         ↓=Rオプションがないとnginxから書き込みできない
@@ -43,5 +44,3 @@ RUN chown -R www-data:www-data storage \
 && chmod -R 775 storage \
 && chmod -R 775 bootstrap/cache 
 USER www-data
-
-# CMD [ "php","artisan","migrate" ]
