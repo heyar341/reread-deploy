@@ -65,7 +65,7 @@ Resources:
       Parameters:
         EnvironmentName: !Ref AWS::StackName
         InstanceType: t2.small
-        ClusterSize: 2
+        ClusterSize: 1
         VPC: !GetAtt VPC.Outputs.VPC
         SecurityGroup: !GetAtt SecurityGroups.Outputs.ECSHostSecurityGroup
         Subnets: !GetAtt VPC.Outputs.PublicSubnets
@@ -77,7 +77,7 @@ Resources:
       Parameters:
         VPC: !GetAtt VPC.Outputs.VPC
         Cluster: !GetAtt ECS.Outputs.Cluster
-        DesiredCount: 2
+        DesiredCount: 1
         Listener: !GetAtt ALB.Outputs.Listener
         Path: /
         ImageTag: !Ref ImageTag
