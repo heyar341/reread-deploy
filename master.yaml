@@ -19,7 +19,7 @@ Resources:
   VPC:
     Type: AWS::CloudFormation::Stack
     Properties:
-      TemplateURL: !Sub https://{{resolve:ssm:CFn-Template-URL:1}}.s3-${AWS::Region}.amazonaws.com/infrastructure/vpc.yaml
+      TemplateURL: !Sub https://{{resolve:ssm:reread-Cfn-Template-URL:1}}.s3-${AWS::Region}.amazonaws.com/infrastructure/vpc.yaml
       Parameters:
         EnvironmentName: !Ref AWS::StackName
         VpcCIDR: 10.0.0.0/16
@@ -31,7 +31,7 @@ Resources:
   SecurityGroups:
     Type: AWS::CloudFormation::Stack
     Properties:
-      TemplateURL: !Sub https://{{resolve:ssm:CFn-Template-URL:1}}.s3-${AWS::Region}.amazonaws.com/infrastructure/security-groups.yaml
+      TemplateURL: !Sub https://{{resolve:ssm:reread-Cfn-Template-URL:1}}.s3-${AWS::Region}.amazonaws.com/infrastructure/security-groups.yaml
       Parameters:
         EnvironmentName: !Ref AWS::StackName
         VPC: !GetAtt VPC.Outputs.VPC
@@ -39,12 +39,11 @@ Resources:
   RDS:
     Type: AWS::CloudFormation::Stack
     Properties:
-      TemplateURL: !Sub https://{{resolve:ssm:CFn-Template-URL:1}}.s3-${AWS::Region}.amazonaws.com/infrastructure/rds.yml
+      TemplateURL: !Sub https://{{resolve:ssm:reread-Cfn-Template-URL:1}}.s3-${AWS::Region}.amazonaws.com/infrastructure/rds.yml
       Parameters:
         EnvironmentName: !Ref AWS::StackName
         DBAllocatedStorage: '5'
         DBInstanceClass: db.t3.micro
-        DBInstanceMasterPassword: '{{resolve:ssm-secure:DB-MASTER-PASSWORD:1}}'
         PrivateSubnet1: !GetAtt VPC.Outputs.PrivateSubnet1
         PrivateSubnet2: !GetAtt VPC.Outputs.PrivateSubnet2
         DBSecurityGroup: !GetAtt SecurityGroups.Outputs.DBSecurityGroup
@@ -52,7 +51,7 @@ Resources:
   ALB:
     Type: AWS::CloudFormation::Stack
     Properties:
-      TemplateURL: !Sub https://{{resolve:ssm:CFn-Template-URL:1}}.s3-${AWS::Region}.amazonaws.com/infrastructure/load-balancers.yaml
+      TemplateURL: !Sub https://{{resolve:ssm:reread-Cfn-Template-URL:1}}.s3-${AWS::Region}.amazonaws.com/infrastructure/load-balancers.yaml
       Parameters:
         EnvironmentName: !Ref AWS::StackName
         VPC: !GetAtt VPC.Outputs.VPC
@@ -62,7 +61,7 @@ Resources:
   ECS:
     Type: AWS::CloudFormation::Stack
     Properties:
-      TemplateURL: !Sub https://{{resolve:ssm:CFn-Template-URL:1}}.s3-${AWS::Region}.amazonaws.com/infrastructure/ecs-cluster.yaml
+      TemplateURL: !Sub https://{{resolve:ssm:reread-Cfn-Template-URL:1}}.s3-${AWS::Region}.amazonaws.com/infrastructure/ecs-cluster.yaml
       Parameters:
         EnvironmentName: !Ref AWS::StackName
         InstanceType: t2.small
@@ -74,7 +73,7 @@ Resources:
   ProductService:
     Type: AWS::CloudFormation::Stack
     Properties:
-      TemplateURL: !Sub https://{{resolve:ssm:CFn-Template-URL:1}}.s3-${AWS::Region}.amazonaws.com/infrastructure/service.yaml
+      TemplateURL: !Sub https://{{resolve:ssm:reread-Cfn-Template-URL:1}}.s3-${AWS::Region}.amazonaws.com/infrastructure/service.yaml
       Parameters:
         VPC: !GetAtt VPC.Outputs.VPC
         Cluster: !GetAtt ECS.Outputs.Cluster
@@ -88,7 +87,7 @@ Resources:
   LifecycleHook:
     Type: AWS::CloudFormation::Stack
     Properties:
-      TemplateURL: !Sub https://{{resolve:ssm:CFn-Template-URL:1}}.s3-${AWS::Region}.amazonaws.com/infrastructure/lifecyclehook.yaml
+      TemplateURL: !Sub https://{{resolve:ssm:reread-Cfn-Template-URL:1}}.s3-${AWS::Region}.amazonaws.com/infrastructure/lifecyclehook.yaml
       Parameters:
         Cluster: !GetAtt ECS.Outputs.Cluster
         ECSAutoScalingGroupName: !GetAtt ECS.Outputs.ECSAutoScalingGroupName
