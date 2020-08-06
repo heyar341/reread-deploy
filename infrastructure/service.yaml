@@ -52,7 +52,7 @@ Resources:
   TaskDefinition:
     Type: AWS::ECS::TaskDefinition
     Properties:
-      Family: nginx-php-fpm-test
+      Family: reread-production
       ContainerDefinitions:
         - Name: nginx
           Essential: true
@@ -81,10 +81,10 @@ Resources:
           LogConfiguration:
             LogDriver: awslogs
             Options:
-              awslogs-group: !Ref CloudWatchPHP-FPMLogsGroup
+              awslogs-group: !Ref CloudWatchPHPFPMLogsGroup
               awslogs-region: !Ref AWS::Region
 
-  CloudWatchPHP-FPMLogsGroup:
+  CloudWatchPHPFPMLogsGroup:
     Type: AWS::Logs::LogGroup
     Properties:
       LogGroupName: !Sub ${AWS::StackName}-PHP-FPM
