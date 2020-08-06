@@ -19,11 +19,6 @@ Parameters:
     Type: String
     ConstraintDescription: "Must select a valid database instance type."
 
-  DBInstanceMasterPassword:
-    NoEcho: true
-    Description: The database admin account password
-    Type: String
-
   PrivateSubnet1:
     Description: "PrivateSubnet1"
     Type: AWS::EC2::Subnet::Id
@@ -54,7 +49,7 @@ Resources:
       DBName: reread
       DBParameterGroupName: charset-utf-8-mysql
       MasterUsername: root
-      MasterUserPassword: !Ref DBInstanceMasterPassword
+      MasterUserPassword: '{{resolve:ssm-secure:DB-MASTER-PASSWORD:3}}'
       StorageType: standard
       MultiAZ: false
       DBSubnetGroupName: !Ref DBSubnetGroup
